@@ -1,0 +1,221 @@
+basePath: /
+definitions:
+  dto.ChangeSegmentDto:
+    properties:
+      id:
+        minimum: 1
+        type: integer
+      segments:
+        items:
+          type: string
+        type: array
+      ttl:
+        type: integer
+    required:
+    - id
+    - segments
+    type: object
+  dto.SegmentDto:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  dto.UserDto:
+    properties:
+      username:
+        type: string
+    required:
+    - username
+    type: object
+  model.Segment:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.User:
+    properties:
+      id:
+        type: integer
+      segments:
+        items:
+          $ref: '#/definitions/model.Segment'
+        type: array
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: alex30052003@icloud.com
+  description: Dynamic user segmentation service
+  title: Avito Test by Safoshkin Alexandr
+  version: "1.0"
+paths:
+  /api/segment:
+    post:
+      consumes:
+      - application/json
+      description: create segment
+      operationId: create-segment
+      parameters:
+      - description: segment info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SegmentDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Segment'
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: CreateSegment
+      tags:
+      - segment
+  /api/segment/{segment_id}:
+    delete:
+      description: delete segment
+      operationId: delete-segment
+      parameters:
+      - description: segment id
+        in: path
+        name: segment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: DeleteSegment
+      tags:
+      - segment
+  /api/user:
+    post:
+      consumes:
+      - application/json
+      description: create user
+      operationId: create-user
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: CreateUser
+      tags:
+      - user
+  /api/user/addSegments:
+    patch:
+      consumes:
+      - application/json
+      description: add segments to user with TTL
+      operationId: add-segments
+      parameters:
+      - description: user id, list of segment's name and TTL. Если хотите добавить
+          сегмент пользователю без TTL, то ставьте TTL равным 0
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeSegmentDto'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: AddSegments
+      tags:
+      - user
+  /api/user/deleteSegments:
+    patch:
+      consumes:
+      - application/json
+      description: Delete user's segments
+      operationId: delete-segments
+      parameters:
+      - description: user id and list of segment's name
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangeSegmentDto'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: DeleteSegments
+      tags:
+      - user
+  /api/user/showSegments/{user_id}:
+    get:
+      description: Show segments of user
+      operationId: show-segment
+      parameters:
+      - description: user's id
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: ShowSegments
+      tags:
+      - user
+swagger: "2.0"

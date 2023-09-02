@@ -1,0 +1,13 @@
+server:
+  host: "0.0.0.0"
+  port: "8000"
+
+db:
+  user: "root"
+  host: "postgres-db"
+  port: "5432"
+  password: "secret"
+  dbname: "avito"
+
+redis:
+  address: "redis-queue:6379"
